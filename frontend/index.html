@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concert Ticket Tokenization Platform - Interactive Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@metamask/detect-provider@2.0.0/dist/detect-provider.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .nft-card {
+            background: linear-gradient(145deg, #f0f0f0, #cacaca);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 10px;
+            box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="gradient-bg shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-white text-xl font-bold">🎫 ConcertTix</h1>
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a href="#events" class="text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md text-sm font-medium">Events</a>
+                            <a href="#marketplace" class="text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md text-sm font-medium">Marketplace</a>
+                            <a href="#my-tickets" class="text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md text-sm font-medium">My Tickets</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="connect-wallet" class="bg-white text-purple-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-100 transition duration-200">
+                        <i class="fas fa-wallet mr-2"></i>Connect Wallet
+                    </button>
+                    <div id="wallet-info" class="hidden text-white text-sm">
+                        <span id="wallet-address"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">
+                Tokenize Your Concert Experience
+            </h1>
+            <p class="text-xl text-white mb-8 max-w-3xl mx-auto">
+                Transform concert tickets into tradeable NFTs with fractional ownership, 
+                secondary market trading, and exclusive fan experiences on the blockchain.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-200">
+                    <i class="fas fa-play mr-2"></i>Watch Demo
+                </button>
+                <button class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition duration-200">
+                    <i class="fas fa-download mr-2"></i>Download Whitepaper
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Revolutionary Features
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Experience the future of concert ticketing with blockchain technology
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="card-hover bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-coins text-purple-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">NFT Tokenization</h3>
+                        <p class="text-gray-600">Convert tickets into unique NFTs with verifiable ownership and metadata</p>
+                    </div>
+                </div>
+                
+                <div class="card-hover bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-share-alt text-blue-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Fractional Ownership</h3>
+                        <p class="text-gray-600">Split expensive tickets into tradeable fractions for broader access</p>
+                    </div>
+                </div>
+                
+                <div class="card-hover bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-exchange-alt text-green-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Secondary Market</h3>
+                        <p class="text-gray-600">Trade tickets peer-to-peer with transparent pricing and instant settlement</p>
+                    </div>
+                </div>
+                
+                <div class="card-hover bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-shield-alt text-yellow-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Anti-Fraud</h3>
+                        <p class="text-gray-600">Blockchain verification prevents counterfeit tickets and double-spending</p>
+                    </div>
+                </div>
+                
+                <div class="card-hover bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-gem text-red-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Exclusive Perks</h3>
+                        <p class="text-gray-600">Unlock special experiences and rewards for NFT holders</p>
+                    </div>
+                </div>
+                
+                <div class="card-hover bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-mobile-alt text-indigo-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Mobile First</h3>
+                        <p class="text-gray-600">Seamless mobile experience with QR code verification</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Section -->
+    <section id="events" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Featured Events
+                </h2>
+                <p class="text-xl text-gray-600">Discover upcoming concerts with tokenized tickets</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="card-hover bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="h-48 bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+                        <i class="fas fa-music text-white text-6xl"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Taylor Swift - Eras Tour</h3>
+                        <p class="text-gray-600 mb-4">Madison Square Garden • June 15, 2024</p>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-2xl font-bold text-purple-600">$150 - $500</span>
+                            <span class="text-sm text-gray-500">5,000 tickets</span>
+                        </div>
+                        <button class="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition duration-200">
+                            View Tickets
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card-hover bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="h-48 bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
+                        <i class="fas fa-guitar text-white text-6xl"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Ed Sheeran - Mathematics Tour</h3>
+                        <p class="text-gray-600 mb-4">Staples Center • July 22, 2024</p>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-2xl font-bold text-blue-600">$120 - $400</span>
+                            <span class="text-sm text-gray-500">8,000 tickets</span>
+                        </div>
+                        <button class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200">
+                            View Tickets
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card-hover bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="h-48 bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center">
+                        <i class="fas fa-drum text-white text-6xl"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Coldplay - Music of the Spheres</h3>
+                        <p class="text-gray-600 mb-4">Wembley Stadium • August 10, 2024</p>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-2xl font-bold text-green-600">$80 - $300</span>
+                            <span class="text-sm text-gray-500">12,000 tickets</span>
+                        </div>
+                        <button class="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition duration-200">
+                            View Tickets
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NFT Demo Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Your Tokenized Tickets
+                </h2>
+                <p class="text-xl text-gray-600">See how your tickets become unique NFTs</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <div class="nft-card slide-in">
+                        <div class="text-center">
+                            <div class="w-32 h-32 bg-gradient-to-br from-purple-400 to-pink-400 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                                <i class="fas fa-ticket-alt text-white text-4xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Taylor Swift - Floor A, Row 5, Seat 12</h3>
+                            <p class="text-gray-600 mb-4">Madison Square Garden • June 15, 2024</p>
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-2xl font-bold text-purple-600">$250</span>
+                                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Active</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-500">Token ID:</span>
+                                    <span class="font-mono">#12345</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Contract:</span>
+                                    <span class="font-mono">0x742d...4C4C</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-6">
+                    <div class="bg-gray-50 p-6 rounded-xl">
+                        <h4 class="text-lg font-semibold text-gray-900 mb-4">NFT Properties</h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Event:</span>
+                                <span class="font-semibold">Taylor Swift - Eras Tour</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Venue:</span>
+                                <span class="font-semibold">Madison Square Garden</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Date:</span>
+                                <span class="font-semibold">June 15, 2024</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Seat:</span>
+                                <span class="font-semibold">Floor A, Row 5, Seat 12</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Price:</span>
+                                <span class="font-semibold">$250.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Fractional:</span>
+                                <span class="font-semibold">No</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-xl">
+                        <h4 class="text-lg font-semibold text-gray-900 mb-4">Actions</h4>
+                        <div class="space-y-3">
+                            <button class="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition duration-200">
+                                <i class="fas fa-share mr-2"></i>Transfer
+                            </button>
+                            <button class="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition duration-200">
+                                <i class="fas fa-store mr-2"></i>List for Sale
+                            </button>
+                            <button class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200">
+                                <i class="fas fa-qrcode mr-2"></i>Show QR Code
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Marketplace Section -->
+    <section id="marketplace" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Secondary Marketplace
+                </h2>
+                <p class="text-xl text-gray-600">Buy and sell tickets with transparent pricing</p>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <h3 class="text-xl font-semibold text-gray-900">Live Marketplace</h3>
+                        <div class="flex gap-2">
+                            <button class="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700 transition duration-200">
+                                All Events
+                            </button>
+                            <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-300 transition duration-200">
+                                Auctions
+                            </button>
+                            <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-300 transition duration-200">
+                                Fixed Price
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Seat</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Seller</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time Left</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-music text-purple-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900">Taylor Swift - Eras Tour</div>
+                                            <div class="text-sm text-gray-500">Madison Square Garden</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Floor A, Row 3, Seat 8</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">$350.00</div>
+                                    <div class="text-sm text-gray-500">+$17.50 fees</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-2">
+                                            <i class="fas fa-user text-blue-600 text-xs"></i>
+                                        </div>
+                                        <span class="text-sm text-gray-900">@ticketmaster</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2d 14h 32m</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <button class="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700 transition duration-200">
+                                        Buy Now
+                                    </button>
+                                </td>
+                            </tr>
+                            
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-guitar text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900">Ed Sheeran - Mathematics</div>
+                                            <div class="text-sm text-gray-500">Staples Center</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Section 101, Row 15, Seat 5</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">$180.00</div>
+                                    <div class="text-sm text-gray-500">+$9.00 fees</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-2">
+                                            <i class="fas fa-user text-green-600 text-xs"></i>
+                                        </div>
+                                        <span class="text-sm text-gray-900">@musiclover</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5d 8h 15m</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <button class="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700 transition duration-200">
+                                        Buy Now
+                                    </button>
+                                </td>
+                            </tr>
+                            
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-drum text-green-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900">Coldplay - Music of Spheres</div>
+                                            <div class="text-sm text-gray-500">Wembley Stadium</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">VIP Section, Row 2, Seat 12</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">$450.00</div>
+                                    <div class="text-sm text-gray-500">+$22.50 fees</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-2">
+                                            <i class="fas fa-user text-purple-600 text-xs"></i>
+                                        </div>
+                                        <span class="text-sm text-gray-900">@concertfan</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1d 3h 45m</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <button class="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700 transition duration-200">
+                                        Buy Now
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Stack Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Built on Cutting-Edge Technology
+                </h2>
+                <p class="text-xl text-gray-600">Leveraging the latest in blockchain and web3 technology</p>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fab fa-ethereum text-orange-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Ethereum</h3>
+                    <p class="text-sm text-gray-600">Smart contracts & NFTs</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-layer-group text-purple-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Polygon</h3>
+                    <p class="text-sm text-gray-600">Low-cost L2 scaling</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-alt text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">OpenZeppelin</h3>
+                    <p class="text-sm text-gray-600">Security standards</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-database text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">IPFS</h3>
+                    <p class="text-sm text-gray-600">Decentralized storage</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="gradient-bg py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">
+                Ready to Transform Concert Ticketing?
+            </h2>
+            <p class="text-xl text-white mb-8 max-w-3xl mx-auto">
+                Join the revolution in live entertainment. Experience seamless, secure, 
+                and transparent ticket trading with blockchain technology.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-200">
+                    <i class="fas fa-rocket mr-2"></i>Get Started
+                </button>
+                <button class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition duration-200">
+                    <i class="fas fa-phone mr-2"></i>Schedule Demo
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">ConcertTix</h3>
+                    <p class="text-gray-400 mb-4">
+                        The future of concert ticketing is here. Tokenize, trade, and experience live events like never before.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition duration-200">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition duration-200">
+                            <i class="fab fa-discord"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition duration-200">
+                            <i class="fab fa-telegram"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Platform</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Events</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Marketplace</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">My Tickets</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Analytics</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Documentation</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">API Reference</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Whitepaper</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Support</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">About</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Careers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Press</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center">
+                <p class="text-gray-400">&copy; 2024 ConcertTix. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Web3 Integration
+        let web3;
+        let userAccount;
+
+        // Initialize Web3
+        async function initWeb3() {
+            if (typeof window.ethereum !== 'undefined') {
+                web3 = new Web3(window.ethereum);
+                try {
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const accounts = await web3.eth.getAccounts();
+                    userAccount = accounts[0];
+                    updateWalletUI();
+                } catch (error) {
+                    console.error('User denied account access');
+                }
+            } else {
+                alert('Please install MetaMask to use this application');
+            }
+        }
+
+        // Update wallet UI
+        function updateWalletUI() {
+            const connectButton = document.getElementById('connect-wallet');
+            const walletInfo = document.getElementById('wallet-info');
+            const walletAddress = document.getElementById('wallet-address');
+            
+            if (userAccount) {
+                connectButton.style.display = 'none';
+                walletInfo.classList.remove('hidden');
+                walletAddress.textContent = `${userAccount.slice(0, 6)}...${userAccount.slice(-4)}`;
+            }
+        }
+
+        // Connect wallet button
+        document.getElementById('connect-wallet').addEventListener('click', initWeb3);
+
+        // Demo interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to cards
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Simulate live updates
+            setInterval(() => {
+                const timeElements = document.querySelectorAll('td:last-child');
+                timeElements.forEach(element => {
+                    if (element.textContent.includes('h') && element.textContent.includes('m')) {
+                        // Simulate countdown
+                        const text = element.textContent;
+                        const hours = parseInt(text.match(/(\d+)h/)?.[1] || 0);
+                        const minutes = parseInt(text.match(/(\d+)m/)?.[1] || 0);
+                        
+                        if (minutes > 0) {
+                            element.textContent = text.replace(/(\d+)m/, `${minutes - 1}m`);
+                        } else if (hours > 0) {
+                            element.textContent = text.replace(/(\d+)h/, `${hours - 1}h`).replace(/(\d+)m/, '59m');
+                        }
+                    }
+                });
+            }, 60000); // Update every minute
+
+            // Add click handlers for demo buttons
+            const buyButtons = document.querySelectorAll('button:contains("Buy Now")');
+            buyButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    alert('Demo: This would initiate the purchase flow with your connected wallet!');
+                });
+            });
+
+            const viewTicketButtons = document.querySelectorAll('button:contains("View Tickets")');
+            viewTicketButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    alert('Demo: This would show available tickets for the selected event!');
+                });
+            });
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
